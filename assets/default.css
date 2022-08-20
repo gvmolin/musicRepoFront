@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+body h1,h2,h3,h4,h5,h6,p,span{
+    color:#31087B;
+    letter-spacing: -0.25vw;
+}
+
+body h1{
+    font-size: 3.5vw;
+    letter-spacing: -0.55vw;
+}
+
+body h2 {
+    font-size: 2vw;
+}
+
+a{
+    text-decoration: none; 
+}
+
+a:hover{
+    cursor: pointer;
+}
+
+button {
+    border: none;
+    height: 5vh;
+    width: 5vw;
+}
+
+td button{
+    height: 2vw;
+    width: 2vw;
+}
+
+
+
+/* ------GLOBAL PATTERNS------ */
+
+.table-title {
+    font-size: 1.5vw;
+}
+
+
+.table-line:hover {
+    background: rgba(255, 255, 255, 0.01);
+    cursor: pointer;
+    
+}
+
+.search-input {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: none;
+    height: 5vh;
+}
+
+.input-symbol-sufix {
+    background-color: rgba(255, 255, 255, 0.05);
+    height: 5vh;
+    width: 5vw;
+    font-size: 5vw;
+    border: none;
+    border-left: #31087B 1px solid;
+}
