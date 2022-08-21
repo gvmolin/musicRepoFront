@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="title-slot">
-      <h1>my Musics</h1>
-      <button class="btn btn-transparent" type="button">
+      <h1>all Musics</h1>
+      <!-- <button class="btn btn-transparent" type="button">
         <i class="fa-solid fa-plus"></i>
-      </button>
+      </button> -->
     </div>
-
+    
     <div>
       <div class="input-group mb-3">
         <input type="text" class="form-control search-input" placeholder="Search" aria-describedby="basic-addon3" />
@@ -19,6 +19,7 @@
         </div>
 
       </div>
+
       <table class="table table-borderless">
         <thead>
           <tr>
@@ -31,21 +32,18 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(music,i) in musics" :key="music.name" class="table-line"
-            @click="$nuxt.$emit('selectMusic', music)">
+          <tr 
+            v-for="(music,i) in musics" 
+            :key="music.name" 
+            class="table-line"
+            @click="$nuxt.$emit('selectMusic', music)"
+          >
             <th scope="row">{{i + 1}}</th>
             <td>{{music.name}}</td>
-            <td>{{ music.artist ? music.name : '-'}}</td>
+            <td>{{ music.artist ?  music.name : '-'}}</td>
             <td>{{music.album}}</td>
             <td>{{music.duration}}</td>
-            <td class="center">
-              <button class="btn btn-transparent center">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-              <button class="btn btn-transparent center">
-                <i class="fa-solid fa-pen"></i>
-              </button>
-            </td>
+            <td class="center"><button class="btn btn-transparent center"><i class="fa-solid fa-heart"></i></button></td>
           </tr>
 
         </tbody>

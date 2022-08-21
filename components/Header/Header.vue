@@ -9,6 +9,7 @@
        :prefix="'Home'"
        :route="'/home'"
        :icon="'fa-solid fa-house'"
+       @bodyOn="$emit('bodyOn')"
       />
 
       <header-item-vue
@@ -21,8 +22,15 @@
       <header-item-vue
        :sufix="'all'"
        :prefix="'Musics'"
-       :route="'/global'"
+       :route="'/all'"
        :icon="'fa-solid fa-earth-americas'"
+      />
+
+      <header-item-vue
+       :sufix="'liked'"
+       :prefix="'Songs'"
+       :route="'/liked'"
+       :icon="'fa fa-heart'"
       />
 
       <header-item-vue
@@ -53,6 +61,14 @@ export default {
     return {
       
     }
+  },
+
+  mounted(){},
+
+  methods: {
+    consolelog(){
+      console.log( 'clicado')
+    },
   },
   
 }

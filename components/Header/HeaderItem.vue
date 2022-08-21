@@ -1,6 +1,5 @@
 <template>
-    <div>
-        <vs-row>
+    <div>     
         <a 
           @click="pushRoute(route)"
           @mouseover="hover = true"
@@ -15,8 +14,6 @@
               >{{prefix}}</span>
           </h2>
         </a>
-      </vs-row>
-      
     </div>
 </template>
 
@@ -31,8 +28,11 @@
         methods: {
             pushRoute(route) {
                 this.$router.push(route);
+                this.$emit('bodyOn')
+            },
+            
 
-            }
+
         }
     }
 </script>

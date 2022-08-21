@@ -54,7 +54,7 @@ td button{
 .table-line:hover {
     background: rgba(255, 255, 255, 0.01);
     cursor: pointer;
-    
+
 }
 
 .search-input {
@@ -70,4 +70,26 @@ td button{
     font-size: 5vw;
     border: none;
     border-left: #31087B 1px solid;
+}
+
+.title-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-slot button {
+    border: #31087B 1px solid;
+}
+
+.title-slot button:hover {
+    transition: 0.5s;
+    background-color: #30087b7a;
+    color: black;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
