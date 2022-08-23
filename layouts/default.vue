@@ -40,6 +40,7 @@ export default {
 
   watch: {
     bodyActive() {
+      console.log('aaaaaaaaa')
       this.changeCols()
       this.reRender()
     },
@@ -106,6 +107,7 @@ export default {
   padding: 1vw;
   height: 100vh;
   background: rgb(6, 6, 6);
+  overflow-y: auto;
 }
 
 #player-config {
@@ -117,4 +119,5 @@ export default {
 .none {
   display: none;
 }
+
 </style>

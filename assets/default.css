@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
-*{
+* {
     padding: 0;
     margin: 0;
 }
@@ -9,12 +9,19 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-body h1,h2,h3,h4,h5,h6,p,span{
-    color:#31087B;
+body h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span {
+    color: #31087B;
     letter-spacing: -0.25vw;
 }
 
-body h1{
+body h1 {
     font-size: 3.5vw;
     letter-spacing: -0.55vw;
 }
@@ -23,11 +30,11 @@ body h2 {
     font-size: 2vw;
 }
 
-a{
-    text-decoration: none; 
+a {
+    text-decoration: none;
 }
 
-a:hover{
+a:hover {
     cursor: pointer;
 }
 
@@ -37,7 +44,7 @@ button {
     width: 5vw;
 }
 
-td button{
+td button {
     height: 2vw;
     width: 2vw;
 }
@@ -93,3 +100,21 @@ td button{
     justify-content: center;
     align-items: center;
 }
+
+hr {
+    color: #31087B;
+    border: #31087B 0.5px solid;
+    margin-top: 10vh;
+}
+
+::-webkit-scrollbar {
+    width: 2px;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #31087B; 
+    border-radius: 5px;
+    height: 5vh;
+    width: 1vw;
+  }

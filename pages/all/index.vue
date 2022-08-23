@@ -75,6 +75,7 @@
           {
             name:'mc zoi de gato',
             album:'hahaha',
+            artist:'exemplo',
             duration:'6:66',
 
           },
