@@ -1,18 +1,30 @@
 <template>
+  <div>
+    
 
-  <div class="container-fluid" v-if="isLogged">
-    <div class="row" v-if="render">
-      <div :class="col1" id="menu-config">
-        <Header @bodyOn="onBodyOn" />
-      </div>
-      <div :class="col2" id="body-config">
-        <nuxt />
-      </div>
-      <div :class="col3" id="player-config">
-        <Player @hidePlayer="onHidePlayer" />
+    <div class="container-fluid" v-if="isLogged">
+      <div class="row">
+        <div :class="col1" id="menu-config">
+          <Header @bodyOn="onBodyOn" />
+        </div>
+        <div :class="col2 || 'none'" id="body-config" v-if="render">
+          <nuxt/>
+        </div>
+        <div :class="col3 || 'none'" id="player-config">
+          <Player @hidePlayer="onHidePlayer" />
+        </div>
       </div>
     </div>
+    <div id="login-page" v-else>
+      <div>
+        <Login @onLogin="onLogin"/>
+      </div>
+
+    </div>
+
+
   </div>
+  
 
 </template>
 
@@ -22,25 +34,24 @@
 import { nextTick } from 'process'
 import Header from '~/components/Header/Header.vue'
 import Player from '~/components/Player.vue'
+import Login from '~/components/Login/LoginPage.vue'
 
 export default {
-  components: { Header, Player },
+  components: { Header, Player, Login },
   data() {
     return {
-      step: '1',
       playerActive: false,
       bodyActive: false,
       col1: 'col',
       col2: 'none',
       col3: 'none',
       render: true,
-      isLogged: true,
+      isLogged: false,
     }
   },
 
   watch: {
     bodyActive() {
-      console.log('aaaaaaaaa')
       this.changeCols()
       this.reRender()
     },
@@ -48,6 +59,10 @@ export default {
       this.changeCols()
       //this.reRender()
     },
+    isLogged(){
+      this.changeCols()
+      this.reRender()
+    }
   },
 
   created() {
@@ -56,10 +71,23 @@ export default {
     })
   },
 
+  mounted(){
+    if(this.isLogged === false){
+      this.$router.push('/home')
+    }
+  },
+
   methods: {
     onSelectMusic(obj) {
       this.playerActive = true,
       console.log(obj)
+    },
+
+    onLogin(){
+      this.bodyActive = false
+      this.playerActive = false
+      this.isLogged = true
+      this.reRender()
     },
 
     changeCols() {
@@ -106,18 +134,25 @@ export default {
 #body-config {
   padding: 1vw;
   height: 100vh;
-  background: rgb(6, 6, 6);
+  background: rgb(8, 8, 8);
   overflow-y: auto;
 }
 
 #player-config {
   padding: 1vw;
   height: 100vh;
-  background: rgb(8, 8, 8);
+  background: rgb(16, 16, 16);
 }
 
-.none {
-  display: none;
+#login-page {
+  padding: 1vw;
+  height: 100vh;
+  background: rgb(8, 8, 8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+
 
 </style>

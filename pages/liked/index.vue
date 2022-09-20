@@ -9,7 +9,7 @@
     
     <div>
       <div class="input-group mb-3">
-        <input type="text" class="form-control search-input" placeholder="Search" aria-describedby="basic-addon3" />
+        <input type="text" class="form-control default-input" placeholder="Search" aria-describedby="basic-addon3" />
         <div class="input-group-append">
           <span class="input-group-text input-symbol-sufix" id="basic-addon3">
             <button class="btn btn-transparent" type="button">
@@ -99,6 +99,11 @@
       
       
     },
+
+    mounted(){
+      this.$emit('render')
+    },
+
     methods: {
       onSelectMusic(){
 

@@ -17,6 +17,7 @@
        :prefix="'Musics'"
        :route="'/my'"
        :icon="'fa-solid fa-user'"
+       @bodyOn="$emit('bodyOn')"
       />
      
       <header-item-vue
@@ -24,6 +25,7 @@
        :prefix="'Musics'"
        :route="'/all'"
        :icon="'fa-solid fa-earth-americas'"
+       @bodyOn="$emit('bodyOn')"
       />
 
       <header-item-vue
@@ -31,13 +33,15 @@
        :prefix="'Songs'"
        :route="'/liked'"
        :icon="'fa fa-heart'"
+       @bodyOn="$emit('bodyOn')"
       />
 
       <header-item-vue
        :sufix="'play'"
        :prefix="'Lists'"
-       :route="'/config'"
+       :route="'/playlists'"
        :icon="'fa fa-list'"
+       @bodyOn="$emit('bodyOn')"
       />
 
       <header-item-vue
@@ -45,6 +49,7 @@
        :prefix="'Account'"
        :route="'/config'"
        :icon="'fa fa-cog'"
+       @bodyOn="$emit('bodyOn')"
       />
     </div>
   </div>
