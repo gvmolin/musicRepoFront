@@ -26,7 +26,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    "~/plugins/font-awesome.js"
+    "~/plugins/font-awesome.js", 
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -40,11 +40,29 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy',
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
 
-  generate: { fallback: '404.html' }
+  generate: { fallback: '404.html' },
+
+  axios: {
+    proxy: true
+  },
+
+  proxy: {
+    '/api': {
+      target: `http://localhost:${process.env.BACKENDPORT}`,
+      changeOrigin: true,
+      pathRewrite: { '^/api': '/' },
+    },
+  },
+
+  env: {
+    backEndPort: process.env.BACKENDPORT
+  },
 }
