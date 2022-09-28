@@ -6,11 +6,11 @@
 
     <div class="login-info-container">
       <label for="username">Username:</label>
-      <input type="text" class="default-input default-radius">
+      <input type="text" class="default-input default-radius" v-model="form.username">
     </div>
     <div class="login-info-container">
       <label for="username">Password:</label>
-      <input type="text" class="default-input default-radius">
+      <input type="password" class="default-input default-radius" v-model="form.password">
     </div>
     <div class="login-button-container">
       <button @click="onLogin" class="btn btn-transparent default-border default-hover">Login</button>
@@ -33,17 +33,23 @@
 
 <script>
 
+const INITIAL_FORM = {
+  username: '',
+  password: '',
+}
+
 export default {
   components: {},
   data() {
     return {
-
+      form: INITIAL_FORM,
     }
   },
 
   methods: {
     onLogin() {
-      this.$emit('onLogin')
+      // console.log(this.form)
+      this.$emit('onLogin', this.form)
     },
   },
 

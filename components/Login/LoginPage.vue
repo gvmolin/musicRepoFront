@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LoginForm v-if="loginPage" @onLogin="$emit('onLogin')" @onClickCreateAccount="onClickCreateAccount" />
+    <LoginForm v-if="loginPage" @onLogin="onLogin" @onClickCreateAccount="onClickCreateAccount" />
     <CreateAccount v-else-if="createAccount" @onClickBackButton="backButtonClicked"
       @accountCreated="()=>{loginPage = true; createAccount = false; onNotify()}" />
 
@@ -23,23 +23,14 @@ export default {
     }
   },
 
-  watch: {
-    // loginPage(){
-    //   this.refreshController()
-    // },
-    // createAccount(){
-    //   this.refreshController()
-    // }
-  },
-
   async mounted() {
     const users = await this.$axios.get('/api/users')
     console.log(users)
   },
 
   methods: {
-    onLogin() {
-      this.$emit('onLogin')
+    onLogin(e) {
+      this.$emit('onLogin', e)
     },
 
     refreshController() {

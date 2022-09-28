@@ -17,11 +17,10 @@ Frontend SPA using vue/nuxt.js and vue-bootstrap. MusicRepo is a music webapp wi
 - Axios config
 - nuxt config
 - backend /users entry points
-
-
+- Functional login
 
 ## To do
-- Functional login
+
 - Functional player
 - musics crud
 - globalmusics, playermusics and other variations

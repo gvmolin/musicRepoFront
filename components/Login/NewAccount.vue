@@ -59,26 +59,37 @@ export default {
         await this.$axios.post('/api/users', this.form)
           .then((res) => {
             if (res.status === 201) {
-              this.$emit('accountCreated')
+              this.form = INITIAL_FORM;
+              this.$emit('accountCreated');
             }
           })
         .catch((err)=>{
-          if (err){
+          if (err) {
             this.$bvToast.toast(`Username already in use, try again.`, {
-                title: 'Failed',
-                autoHideDelay: 3000,
-                appendToast: true,
-                toaster: 'b-toaster-bottom-right',
-                variant: "danger",
-                noCloseButton: true,
-                bodyClass: 'toast-body-class-fail',
-                headClass: 'example'
-
-              })
+              title: 'Failed',
+              autoHideDelay: 3000,
+              appendToast: true,
+              toaster: 'b-toaster-bottom-right',
+              variant: "danger",
+              noCloseButton: true,
+              bodyClass: 'toast-body-class-fail',
+              headClass: 'example'
+            })
           }
         })
       } else {
-        alert('senhas diferentes')
+        if (err) {
+            this.$bvToast.toast(`The password confirmation doesn't match.`, {
+              title: 'Failed',
+              autoHideDelay: 3000,
+              appendToast: true,
+              toaster: 'b-toaster-bottom-right',
+              variant: "danger",
+              noCloseButton: true,
+              bodyClass: 'toast-body-class-fail',
+              headClass: 'example'
+            })
+          }
       }
 
     },

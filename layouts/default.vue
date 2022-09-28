@@ -1,14 +1,12 @@
 <template>
   <div>
-    
-
     <div class="container-fluid" v-if="isLogged">
       <div class="row">
         <div :class="col1" id="menu-config">
           <Header @bodyOn="onBodyOn" />
         </div>
         <div :class="col2 || 'none'" id="body-config" v-if="render">
-          <nuxt/>
+          <nuxt />
         </div>
         <div :class="col3 || 'none'" id="player-config">
           <Player @hidePlayer="onHidePlayer" />
@@ -17,14 +15,14 @@
     </div>
     <div id="login-page" v-else>
       <div>
-        <Login @onLogin="onLogin"/>
+        <Login @onLogin="onLogin" />
       </div>
 
     </div>
 
 
   </div>
-  
+
 
 </template>
 
@@ -46,7 +44,7 @@ export default {
       col2: 'none',
       col3: 'none',
       render: true,
-      isLogged: false,
+      isLogged: true,
     }
   },
 
@@ -59,7 +57,7 @@ export default {
       this.changeCols()
       //this.reRender()
     },
-    isLogged(){
+    isLogged() {
       this.changeCols()
       this.reRender()
     }
@@ -71,23 +69,64 @@ export default {
     })
   },
 
-  mounted(){
-    if(this.isLogged === false){
+  async mounted() {
+    // localStorage.removeItem('token')
+    if (!localStorage.getItem("token")) {
+      this.isLogged = false
+    }
+
+    if (this.isLogged === false) {
       this.$router.push('/home')
     }
+
+    const test = await this.$axios.$get('/api/auth')
+    console.log(test)
   },
 
   methods: {
     onSelectMusic(obj) {
       this.playerActive = true,
-      console.log(obj)
+        console.log(obj)
     },
 
-    onLogin(){
-      this.bodyActive = false
-      this.playerActive = false
-      this.isLogged = true
-      this.reRender()
+    onLogin(e) {
+      try {
+        this.$axios.$post('/api/auth', e)
+          .then(res => {
+            if (res != '' && res != null && res) {
+              localStorage.setItem("token", res.accessToken);
+              this.bodyActive = false
+              this.playerActive = false
+              this.isLogged = true
+              this.reRender()
+            } else {
+              this.$bvToast.toast(`Incorrect password, try again.`, {
+                title: 'Failed',
+                autoHideDelay: 3000,
+                appendToast: true,
+                toaster: 'b-toaster-bottom-right',
+                variant: "danger",
+                noCloseButton: true,
+                bodyClass: 'toast-body-class-fail',
+                headClass: 'example'
+              })
+            }
+          })
+          .catch(err => {
+            this.$bvToast.toast(`Incorrect username, try again.`, {
+              title: 'Failed',
+              autoHideDelay: 3000,
+              appendToast: true,
+              toaster: 'b-toaster-bottom-right',
+              variant: "danger",
+              noCloseButton: true,
+              bodyClass: 'toast-body-class-fail',
+              headClass: 'example'
+            })
+          })
+      } catch (error) {
+        console.log(error)
+      }
     },
 
     changeCols() {
@@ -152,7 +191,4 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
-
-
 </style>
