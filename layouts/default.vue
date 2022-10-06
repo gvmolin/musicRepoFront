@@ -78,9 +78,6 @@ export default {
     if (this.isLogged === false) {
       this.$router.push('/home')
     }
-
-    const test = await this.$axios.$get('/api/auth')
-    console.log(test)
   },
 
   methods: {

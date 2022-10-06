@@ -23,11 +23,6 @@ export default {
     }
   },
 
-  async mounted() {
-    const users = await this.$axios.get('/api/users')
-    console.log(users)
-  },
-
   methods: {
     onLogin(e) {
       this.$emit('onLogin', e)

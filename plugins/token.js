@@ -13,6 +13,7 @@ export default function ({ app: { $axios }, redirect }) {
     const code = parseInt(error.response && error.response.status);
     if (code === 401) {
       localStorage.setItem("token", "");
+      window.location.reload();
     }
   });
 }
