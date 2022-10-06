@@ -18,15 +18,21 @@ Frontend SPA using vue/nuxt.js and vue-bootstrap. MusicRepo is a music webapp wi
 - nuxt config
 - backend /users entry points
 - Functional login
+- Create musics and albums
+- show album cover
+- input when music file is selected
 
 ## To do
 
+- Musics list
+- Albums list
+- Musics/albums update
 - Functional player
-- musics crud
 - globalmusics, playermusics and other variations
 - Functional config page 
 - password validation
 - password 'eye button' change icon
+- All fields validations
 
 ## Installation
 

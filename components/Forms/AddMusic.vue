@@ -260,6 +260,4 @@ export default {
   color:#31087B;
   width:32%;
 }
-
-
 </style>
