@@ -28,6 +28,21 @@
           </div>
 
         </div>
+        <!-- <div id="app">
+          <b-table show-empty :items="musics" :fields="fields" :current-page="currentPage" :per-page="0"></b-table>
+          <b-pagination size="md" :total-rows="totalItems" v-model="currentPage" :per-page="perPage"></b-pagination>
+        </div> -->
+        <!-- <b-table id="my-table" :items="musics" :fields="['name','album.artist','album.name']" :per-page="perPage" :current-page="currentPage" hover class="table table-borderless">
+          <template #cell(show_details)="row">
+            <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+              dddddddd
+            </b-button>
+    
+            
+            
+          </template>
+
+        </b-table> -->
         <table class="table table-borderless">
           <thead>
             <tr>
@@ -40,13 +55,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(music, i) in musics" :key="music.name" class="table-line"
+            <tr v-for="(music, i) in musics" :key="music.id" class="table-line"
               @click="$nuxt.$emit('selectMusic', music)">
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ music.name }}</td>
-              <td>{{ music.artist ? music.name : '-' }}</td>
-              <td>{{ music.album }}</td>
-              <td>{{ music.duration }}</td>
+              <td>{{ music.album.artist}}</td>
+              <td>{{ music.album.name }}</td>
+              <td> 66:6 </td>
               <td class="center">
                 <button class="btn btn-transparent center">
                   <i class="fa-solid fa-trash"></i>
@@ -60,6 +75,53 @@
           </tbody>
         </table>
 
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-end">
+            <li 
+              class="page-item"
+              v-if="parseInt(pagination.page) - 1 > 0"
+            >
+              <a class="page-link" @click="paginationChange(-1)">prev</a>
+            </li>
+
+            <li 
+              class="page-item" 
+              v-if="parseInt(pagination.page) - 2 > 0"
+            >
+              <a class="page-link" @click="paginationChange(-2)">{{parseInt(pagination.page) - 2}}</a>
+            </li>
+
+            <li 
+              class="page-item" 
+              v-if="parseInt(pagination.page) - 1 > 0"
+            >
+              <a class="page-link" @click="paginationChange(-1)">{{parseInt(pagination.page) - 1}}</a>
+            </li>
+            <li class="page-item"><a class="page-link" style="color:red;">{{pagination.page}}</a></li>
+            
+            <li 
+              class="page-item" 
+              v-if="parseInt(pagination.page) < pagination.totalPages"
+            >
+              <a class="page-link" @click="paginationChange(1)">{{parseInt(pagination.page) + 1}}</a>
+            </li>
+
+            <li 
+              class="page-item" 
+              v-if="parseInt(pagination.page) + 1 < pagination.totalPages"
+            >
+              <a class="page-link" @click="paginationChange(1)">{{parseInt(pagination.page) + 2}}</a>
+            </li>
+
+            <li 
+              class="page-item" 
+              v-if="parseInt(pagination.page) < pagination.totalPages"
+            >
+              <a class="page-link" @click="paginationChange(1)">next</a>
+            </li>
+          </ul>
+        </nav>
+
       </div>
     </div>
   </div>
@@ -70,52 +132,45 @@
 <script>
 import AddMusic from '~/components/Forms/AddMusic.vue'
 
+const INITIAL_PAGINATION = {
+  page:1,
+  limit:10,
+  totalItems:0,
+  totalPages:0,
+};
+
 export default {
-  components: {AddMusic, },
+  components: { AddMusic, },
   data() {
     return {
-      musics: [
-        {
-          name: 'name',
-          album: 'example',
-          duration: '3:48',
-
-        },
-        {
-          name: 'lorem',
-          album: 'ipsum',
-          duration: '2:22',
-
-        },
-        {
-          name: 'mc zoi de gato',
-          album: 'hahaha',
-          duration: '6:66',
-
-        },
-        {
-          name: 'in_the_end.mp3',
-          album: 'hybrid theory',
-          duration: '3:45',
-
-        },
-        {
-          name: 'lorem22',
-          album: 'ipsum',
-          duration: '2:22',
-
-        }
-      ],
+      musics:[],
       isAdding: false,
+      pagination: {...INITIAL_PAGINATION},
 
     }
-
-
   },
-  methods: {
-    onSelectMusic() {
 
-    }
+  mounted(){
+    this.getMusicsList();
+  },
+
+  watch:{
+    pagination(){}
+  },
+
+  methods: {
+    paginationChange(val){
+      console.log(val)
+      this.pagination.page = parseInt(this.pagination.page) + val
+      this.getMusicsList();
+    },
+    // ---------- CRUD
+    async getMusicsList(){
+      const data = await this.$axios.$get(`/api/musics?page=${this.pagination.page}&limit=${this.pagination.limit}&sortBy=name:ASC`);
+      console.log(data);
+      this.musics = data.result;
+      this.pagination = data.pagination;
+    },
   },
 
 }

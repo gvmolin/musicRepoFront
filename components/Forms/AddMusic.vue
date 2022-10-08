@@ -120,65 +120,8 @@ export default {
     }
   },
 
-  mounted(){
-  },
-
   methods: {
-    onChangeMusicFile(music, e){
-      music.file = e.target.files[0]
-    },
-
-    reRender() {
-      this.renderLabel = false
-       this.$nextTick(() => {
-        this.renderLabel = true
-      })
-    },
-
-    onAddAlbumCover(e) {
-      console.log(e)
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
-      this.data.album.file = files[0]
-      this.coverImage = URL.createObjectURL(files[0])
-    },
-
-    logForm() {
-      console.log(this.data)
-    },
-
-    addMusic() {
-      this.data.musics.push({
-        name: '',
-        file: null,
-        key: this.generateKey(),
-        album: null,
-      })
-    },
-
-    removeMusic() {
-      if(this.data.musics.length > 1){
-        this.data.musics.pop()
-      }
-    },
-
-    generateKey() {
-      return Math.floor(Math.random() * 1000000)
-    },
-
-    createFormData(obj){
-      const formData = new FormData();
-      // formData.append('file', obj.file)
-      for (var key in obj) {
-        formData.append(key, obj[key]);
-      }
-      return formData;
-    },
-
-    async onCreate(){
-      await this.onCreateAlbum()
-    },
-
+    //-------------CRUD
     async onCreateAlbum() {
       const formData = this.createFormData(this.data.album)
       try {
@@ -232,6 +175,59 @@ export default {
         console.log(error)
       }
       
+    },
+
+    //---------- USER INTERACTION
+    onChangeMusicFile(music, e){
+      music.file = e.target.files[0]
+    },
+
+    onAddAlbumCover(e) {
+      console.log(e)
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.data.album.file = files[0]
+      this.coverImage = URL.createObjectURL(files[0])
+    },
+
+    addMusic() {
+      this.data.musics.push({
+        name: '',
+        file: null,
+        key: this.generateKey(),
+        album: null,
+      })
+    },
+
+    removeMusic() {
+      if(this.data.musics.length > 1){
+        this.data.musics.pop()
+      }
+    },
+
+    async onCreate(){
+      await this.onCreateAlbum()
+    },
+
+    // -------------UTILS
+    createFormData(obj){
+      const formData = new FormData();
+      // formData.append('file', obj.file)
+      for (var key in obj) {
+        formData.append(key, obj[key]);
+      }
+      return formData;
+    },
+
+    generateKey() {
+      return Math.floor(Math.random() * 1000000)
+    },
+
+    reRender() {
+      this.renderLabel = false
+       this.$nextTick(() => {
+        this.renderLabel = true
+      })
     },
   },
 }
