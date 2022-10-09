@@ -47,21 +47,22 @@
           <thead>
             <tr>
               <th class="table-title" scope="col">#</th>
-              <th class="table-title" scope="col">Music</th>
+              <th class="table-title" scope="col" style="display:flex; align-items:flex-end;">Music<button class="th-button" @click="onChangeSort('name')"><i class="fa-solid fa-sort"></i></button></th>
               <th class="table-title" scope="col">Artist</th>
               <th class="table-title" scope="col">Album</th>
               <th class="table-title" scope="col">Duration</th>
+              <th class="table-title" scope="col" style="display:flex; align-items:flex-end;">Created<button class="th-button" @click="onChangeSort('created')"><i class="fa-solid fa-sort"></i></button></th>
               <th class="table-title" scope="col"></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(music, i) in musics" :key="music.id" class="table-line"
-              @click="$nuxt.$emit('selectMusic', music)">
-              <th scope="row">{{ i + 1 }}</th>
-              <td>{{ music.name }}</td>
-              <td>{{ music.album.artist}}</td>
-              <td>{{ music.album.name }}</td>
-              <td> 66:6 </td>
+            <tr v-for="(music, i) in musics" :key="music.id" class="table-line">
+              <th scope="row" @click="$nuxt.$emit('selectMusic', music)">{{ `${(pagination.page - 1)}` + `${(i)}` }}</th>
+              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.name }}</td>
+              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.album.artist}}</td>
+              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.album.name }}</td>
+              <td @click="$nuxt.$emit('selectMusic', music)"> 66:6 </td>
+              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.formatedCreated}}</td>
               <td class="center">
                 <button class="btn btn-transparent center">
                   <i class="fa-solid fa-trash"></i>
@@ -75,52 +76,11 @@
           </tbody>
         </table>
 
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-end">
-            <li 
-              class="page-item"
-              v-if="parseInt(pagination.page) - 1 > 0"
-            >
-              <a class="page-link" @click="paginationChange(-1)">prev</a>
-            </li>
-
-            <li 
-              class="page-item" 
-              v-if="parseInt(pagination.page) - 2 > 0"
-            >
-              <a class="page-link" @click="paginationChange(-2)">{{parseInt(pagination.page) - 2}}</a>
-            </li>
-
-            <li 
-              class="page-item" 
-              v-if="parseInt(pagination.page) - 1 > 0"
-            >
-              <a class="page-link" @click="paginationChange(-1)">{{parseInt(pagination.page) - 1}}</a>
-            </li>
-            <li class="page-item"><a class="page-link" style="color:red;">{{pagination.page}}</a></li>
-            
-            <li 
-              class="page-item" 
-              v-if="parseInt(pagination.page) < pagination.totalPages"
-            >
-              <a class="page-link" @click="paginationChange(1)">{{parseInt(pagination.page) + 1}}</a>
-            </li>
-
-            <li 
-              class="page-item" 
-              v-if="parseInt(pagination.page) + 1 < pagination.totalPages"
-            >
-              <a class="page-link" @click="paginationChange(1)">{{parseInt(pagination.page) + 2}}</a>
-            </li>
-
-            <li 
-              class="page-item" 
-              v-if="parseInt(pagination.page) < pagination.totalPages"
-            >
-              <a class="page-link" @click="paginationChange(1)">next</a>
-            </li>
-          </ul>
-        </nav>
+        <pagination-component
+          :pagination="pagination"
+          @onPaginationChange="paginationChanged"
+        />
+        
 
       </div>
     </div>
@@ -131,6 +91,7 @@
 
 <script>
 import AddMusic from '~/components/Forms/AddMusic.vue'
+import PaginationComponent from '~/components/Pagination/Pagination.vue'
 
 const INITIAL_PAGINATION = {
   page:1,
@@ -139,19 +100,29 @@ const INITIAL_PAGINATION = {
   totalPages:0,
 };
 
+const INITIAL_SORT = {
+  field:'name',
+  order:'ASC',
+};
+
 export default {
-  components: { AddMusic, },
+  components: { AddMusic, PaginationComponent },
   data() {
     return {
       musics:[],
       isAdding: false,
       pagination: {...INITIAL_PAGINATION},
+      sort: {...INITIAL_SORT},
 
     }
   },
 
-  mounted(){
+  beforeMount(){
     this.getMusicsList();
+  },
+
+  mounted(){
+    
   },
 
   watch:{
@@ -159,18 +130,44 @@ export default {
   },
 
   methods: {
-    paginationChange(val){
-      console.log(val)
-      this.pagination.page = parseInt(this.pagination.page) + val
+    onChangeSort(str){
+      if (this.sort.field === str){
+        this.sort.order = this.sort.order === 'ASC' ? 'DESC' : 'ASC'
+      }
+      this.sort.field = str
       this.getMusicsList();
     },
+
+    paginationChanged(){
+      this.getMusicsList();
+    },
+    
     // ---------- CRUD
     async getMusicsList(){
-      const data = await this.$axios.$get(`/api/musics?page=${this.pagination.page}&limit=${this.pagination.limit}&sortBy=name:ASC`);
-      console.log(data);
-      this.musics = data.result;
-      this.pagination = data.pagination;
+      const url = this.mountUrl('/api/musics')
+      const {result, pagination} = await this.$axios.$get(url);
+      this.musics = result;
+      this.formatAllDates(result); 
+      this.pagination = pagination;
     },
+
+    // ---------- UTILS
+    formatAllDates(arr){
+      arr.map(element => {
+        const date = new Date(element.created) 
+        const formated = date.toLocaleDateString('en-US');
+        element.formatedCreated = formated
+      })
+      return arr
+    },
+
+    mountUrl(str){
+      let baseUrl = str;
+      baseUrl = baseUrl + `?page=${this.pagination.page}&limit=${this.pagination.limit}`
+      baseUrl = baseUrl + `&sortBy=${this.sort.field}:${this.sort.order}`
+      return baseUrl;
+    }
+
   },
 
 }
@@ -228,5 +225,32 @@ export default {
 .form{
   display: flex;
   justify-content: space-between;
+}
+
+body .pagination .page-item a{
+  border: none;
+  background-color: transparent;
+  color: #31087B;
+  font-size: 2vw;
+}
+
+body .pagination .current-page a{
+  border: none;
+  background-color: transparent;
+  color: #5121ac;
+  font-size: 2vw;
+}
+
+.th-button{
+  height: 2vw;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  padding-left: 0.5vw;
+  display:flex;
+}
+
+.table-title{
+  align-items: baseline;
 }
 </style>

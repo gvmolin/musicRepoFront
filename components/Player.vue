@@ -13,8 +13,8 @@
           <h2 class="music-icon"><i class="fa-solid fa-music"></i></h2>
         </div>
         <div class="center" style="flex-direction:column; ">
-          <h2>music name</h2>
-          <h3>artist name</h3>
+          <h2>{{music.name}}</h2>
+          <h3>{{music.album.artist}}</h3>
           <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0"
               aria-valuemax="100"></div>
@@ -43,7 +43,19 @@
 </template>
 
 <script>
+export default {
+  props:['music'],
+  data(){
+    return{
 
+    }
+  },
+  watch:{
+    music(){
+      console.log('-------',this.music)
+    }
+  }
+}
 </script>
 
 <style>

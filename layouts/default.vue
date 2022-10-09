@@ -9,7 +9,10 @@
           <nuxt />
         </div>
         <div :class="col3 || 'none'" id="player-config">
-          <Player @hidePlayer="onHidePlayer" />
+          <Player 
+            @hidePlayer="onHidePlayer"
+            :music="selectedMusic"
+          />
         </div>
       </div>
     </div>
@@ -34,6 +37,18 @@ import Header from '~/components/Header/Header.vue'
 import Player from '~/components/Player.vue'
 import Login from '~/components/Login/LoginPage.vue'
 
+const INITIAL_MUSIC = {
+  album:'',
+  created:'',
+  deleted:'',
+  file:'',
+  formatedCreated:'',
+  id:'',
+  name:'',
+  updated:'',
+  updatedBy:'',
+}
+
 export default {
   components: { Header, Player, Login },
   data() {
@@ -45,6 +60,8 @@ export default {
       col3: 'none',
       render: true,
       isLogged: true,
+      selectedMusic:INITIAL_MUSIC,
+      
     }
   },
 
@@ -60,17 +77,17 @@ export default {
     isLogged() {
       this.changeCols()
       this.reRender()
-    }
+    },
   },
 
   created() {
     this.$nuxt.$on('selectMusic', (obj) => {
-      this.onSelectMusic(obj)
+      this.playerActive = true,
+      this.selectedMusic = obj
     })
   },
 
   async mounted() {
-    // localStorage.removeItem('token')
     if (!localStorage.getItem("token")) {
       this.isLogged = false
     }
@@ -81,10 +98,6 @@ export default {
   },
 
   methods: {
-    onSelectMusic(obj) {
-      this.playerActive = true,
-        console.log(obj)
-    },
 
     onLogin(e) {
       try {
