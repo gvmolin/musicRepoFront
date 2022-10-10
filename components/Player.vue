@@ -39,6 +39,17 @@
         </div>
       </div>
     </div>
+    <vue-plyr>
+      <audio controls crossorigin playsinline>
+        <source
+          src=""
+          type="audio/mp3"
+          id="myAudio"
+        />
+        
+      </audio>
+    </vue-plyr>
+
   </div>
 </template>
 
@@ -47,12 +58,24 @@ export default {
   props:['music'],
   data(){
     return{
-
+      src:null,
+      file:null,
     }
   },
   watch:{
-    music(){
-      console.log('-------',this.music)
+    async music(){
+      // const res = await this.$axios.$get(`/api/musics/file/${this.music.id}`)
+      // var mp3 = new Blob([res], { type: 'application/octet-stream' })
+      // const url = (window.URL || window.webkitURL).createObjectURL( mp3 );
+      
+      // console.log(url)
+      const audioObj = document.getElementById("myAudio");
+      audioObj.setAttribute("src", "/audio/test.mp3")
+      console.log(audioObj)
+      
+      // console.log(mp3)
+      
+      // console.log(res)
     }
   }
 }
