@@ -121,10 +121,6 @@ export default {
     this.getMusicsList();
   },
 
-  mounted(){
-    
-  },
-
   watch:{
     pagination(){}
   },

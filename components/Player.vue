@@ -31,53 +31,58 @@
         </div>
         <div class="control-buttons center">
           <button class="btn btn-transparent" type="button"><i class="fa-solid fa-backward-step"></i></button>
-          <button class="btn btn-transparent" type="button" id="play-button"><i class="fa-solid fa-play"></i></button>
+          <button class="btn btn-transparent" type="button" id="play-button" @click="togglePlayPause"><i class="fa-solid fa-play"></i></button>
           <button class="btn btn-transparent" type="button"><i class="fa-solid fa-forward-step"></i></button>
         </div>
         <div class="like-button">
           <button class="btn btn-transparent" type="button"><i class="fa-solid fa-heart"></i></button>
         </div>
       </div>
-    </div>
-    <vue-plyr>
-      <audio controls crossorigin playsinline>
-        <source
-          src=""
-          type="audio/mp3"
-          id="myAudio"
-        />
-        
-      </audio>
-    </vue-plyr>
 
+      <audio v-if="audioRender" autoplay controls id="virtual-player">
+        <source :src="`api/musics/file/${music.id}`" type="audio/mp3">
+      </audio>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   props:['music'],
+
   data(){
     return{
-      src:null,
-      file:null,
+      audioRender: true,
+      isPlaying: false,
+      audioTag: null,
     }
   },
+
+  mounted(){
+    this.audioTag = document.querySelector('#virtual-player')
+  },
+
   watch:{
-    async music(){
-      // const res = await this.$axios.$get(`/api/musics/file/${this.music.id}`)
-      // var mp3 = new Blob([res], { type: 'application/octet-stream' })
-      // const url = (window.URL || window.webkitURL).createObjectURL( mp3 );
-      
-      // console.log(url)
-      const audioObj = document.getElementById("myAudio");
-      audioObj.setAttribute("src", "/audio/test.mp3")
-      console.log(audioObj)
-      
-      // console.log(mp3)
-      
-      // console.log(res)
-    }
-  }
+    music(){
+      this.reload();
+    },
+  },
+
+  methods: {
+    togglePlayPause(){
+      this.isPlaying = (this.isPlaying ? false : true);
+      this.isPlaying ? this.audioTag.pause() : this.audioTag.play();
+    },
+
+    reload(){
+      this.audioRender = false;
+       this.$nextTick(() => {
+        this.audioRender = true
+        this.audioTag.load();
+      })
+    },
+
+  },
 }
 </script>
 
