@@ -25,7 +25,7 @@
       <div class="progress-range">
         <input type="range">
         <div class="number-range">
-          <h4>0:00</h4>
+          <h4>{{this.currentTime + ''}}</h4>
           <h4>/</h4>
           <h4>3:33</h4>
         </div>
@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <audio v-if="audioRender" autoplay controls id="virtual-player">
+      <audio v-if="audioRender" autoplay controls @timeupdate="updateTime" @load="console" id="virtual-player">
         <source :src="`api/musics/file/${music.id}`" type="audio/mp3">
       </audio>
     </div>
@@ -47,6 +47,8 @@
 </template>
 
 <script>
+const test = document.querySelector('#virtual-player');
+
 export default {
   props:['music'],
 
@@ -55,32 +57,60 @@ export default {
       audioRender: true,
       isPlaying: false,
       audioTag: null,
+      currentTime: '00:00',
+      loaded: false,
     }
   },
 
-  mounted(){
-    this.audioTag = document.querySelector('#virtual-player')
+  beforeMount(){
+    this.audioTag = document.querySelector('#virtual-player');
   },
 
   watch:{
-    music(){
+    async music(){
       this.reload();
+      
     },
   },
 
   methods: {
+    console(){
+      console.log('aaaaaaaaaa')
+    },
     togglePlayPause(){
+      const audio = document.querySelector('#virtual-player');
       this.isPlaying = (this.isPlaying ? false : true);
-      this.isPlaying ? this.audioTag.pause() : this.audioTag.play();
+      this.isPlaying ? audio.pause() : audio.play();
     },
 
     reload(){
+      const audio = document.querySelector('#virtual-player');
       this.audioRender = false;
+      this.loaded = false;
+      if(this.isPlaying) audio.pause();
        this.$nextTick(() => {
-        this.audioRender = true
-        this.audioTag.load();
+        this.audioRender = true;
+        this.loaded = true;
       })
     },
+
+    secondsToMinutes(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`;
+    },
+
+    updateTime(){
+      const audio = document.querySelector('#virtual-player');
+      if(this.audioRender === true){
+        audio.addEventListener('timeupdate', ()=>{
+          const num = audio.currentTime;
+          this.currentTime = this.secondsToMinutes(num);
+        })
+      }
+    },
+
+
 
   },
 }
