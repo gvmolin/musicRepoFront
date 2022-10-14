@@ -57,12 +57,12 @@
           </thead>
           <tbody>
             <tr v-for="(music, i) in musics" :key="music.id" class="table-line">
-              <th scope="row" @click="$nuxt.$emit('selectMusic', music)">{{ `${(pagination.page - 1)}` + `${(i)}` }}</th>
-              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.name }}</td>
-              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.album.artist}}</td>
-              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.album.name }}</td>
-              <td @click="$nuxt.$emit('selectMusic', music)"> 66:6 </td>
-              <td @click="$nuxt.$emit('selectMusic', music)">{{ music.formatedCreated}}</td>
+              <th scope="row" @click="onSelectMusic(music)">{{ `${(pagination.page - 1)}` + `${(i)}` }}</th>
+              <td @click="onSelectMusic(music)">{{ music.name }}</td>
+              <td @click="onSelectMusic(music)">{{ music.album.artist}}</td>
+              <td @click="onSelectMusic(music)">{{ music.album.name }}</td>
+              <td @click="onSelectMusic(music)"> 66:6 </td>
+              <td @click="onSelectMusic(music)">{{ music.formatedCreated}}</td>
               <td class="center">
                 <button class="btn btn-transparent center">
                   <i class="fa-solid fa-trash"></i>
@@ -126,6 +126,7 @@ export default {
   },
 
   methods: {
+    // ---------- USER INTERACTION
     onChangeSort(str){
       if (this.sort.field === str){
         this.sort.order = this.sort.order === 'ASC' ? 'DESC' : 'ASC'
@@ -137,13 +138,20 @@ export default {
     paginationChanged(){
       this.getMusicsList();
     },
+
+    onSelectMusic(music){
+      this.$nuxt.$emit('selectMusic', {
+        music: {...music},
+        list: [...this.musics],
+      })
+    },
     
     // ---------- CRUD
     async getMusicsList(){
       const url = this.mountUrl('/api/musics')
       const {result, pagination} = await this.$axios.$get(url);
+      this.formatAllDates(result);
       this.musics = result;
-      this.formatAllDates(result); 
       this.pagination = pagination;
     },
 
@@ -154,7 +162,6 @@ export default {
         const formated = date.toLocaleDateString('en-US');
         element.formatedCreated = formated
       })
-      return arr
     },
 
     mountUrl(str){

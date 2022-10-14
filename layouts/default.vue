@@ -12,6 +12,7 @@
           <Player 
             @hidePlayer="onHidePlayer"
             :music="selectedMusic"
+            :musics="musicsList"
           />
         </div>
       </div>
@@ -61,7 +62,7 @@ export default {
       render: true,
       isLogged: true,
       selectedMusic:INITIAL_MUSIC,
-      
+      musicsList:[],
     }
   },
 
@@ -82,8 +83,9 @@ export default {
 
   created() {
     this.$nuxt.$on('selectMusic', (obj) => {
-      this.playerActive = true,
-      this.selectedMusic = obj
+      this.playerActive = true;
+      this.selectedMusic = obj.music;
+      this.musicsList = [...obj.list];
     })
   },
 
@@ -98,7 +100,6 @@ export default {
   },
 
   methods: {
-
     onLogin(e) {
       try {
         this.$axios.$post('/api/auth', e)

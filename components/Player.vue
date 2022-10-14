@@ -13,8 +13,8 @@
           <h2 class="music-icon"><i class="fa-solid fa-music"></i></h2>
         </div>
         <div class="center" style="flex-direction:column; ">
-          <h2>{{music.name}}</h2>
-          <h3>{{music.album.artist}}</h3>
+          <h2>{{currentMusic.name}}</h2>
+          <h3>{{currentMusic.album.artist}}</h3>
           <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0"
               aria-valuemax="100"></div>
@@ -30,27 +30,25 @@
           <h4>3:33</h4>
         </div>
         <div class="control-buttons center">
-          <button class="btn btn-transparent" type="button"><i class="fa-solid fa-backward-step"></i></button>
+          <button class="btn btn-transparent" type="button" @click="onPrev"><i class="fa-solid fa-backward-step"></i></button>
           <button class="btn btn-transparent" type="button" id="play-button" @click="togglePlayPause"><i class="fa-solid fa-play"></i></button>
-          <button class="btn btn-transparent" type="button"><i class="fa-solid fa-forward-step"></i></button>
+          <button class="btn btn-transparent" type="button" @click="onNext"><i class="fa-solid fa-forward-step"></i></button>
         </div>
         <div class="like-button">
           <button class="btn btn-transparent" type="button"><i class="fa-solid fa-heart"></i></button>
         </div>
       </div>
 
-      <audio v-if="audioRender" autoplay controls @timeupdate="updateTime" @load="console" id="virtual-player">
-        <source :src="`api/musics/file/${music.id}`" type="audio/mp3">
+      <audio v-if="audioRender" autoplay controls @timeupdate="updateTime" id="virtual-player" style="display:none;">
+        <source :src="`api/musics/file/${currentMusic.id}`" type="audio/mp3">
       </audio>
     </div>
   </div>
 </template>
 
 <script>
-const test = document.querySelector('#virtual-player');
-
 export default {
-  props:['music'],
+  props:['music', 'musics'],
 
   data(){
     return{
@@ -59,6 +57,8 @@ export default {
       audioTag: null,
       currentTime: '00:00',
       loaded: false,
+      currentMusic: this.music,
+      currentList: this.musics,
     }
   },
 
@@ -67,20 +67,52 @@ export default {
   },
 
   watch:{
-    async music(){
+    async currentMusic(){
       this.reload();
-      
     },
   },
 
   methods: {
-    console(){
-      console.log('aaaaaaaaaa')
+    // ------USER INTERACTION
+    onPrev(){
+      const index = this.currentList.findIndex(element => element.id === this.currentMusic.id);
+      if(index > 0){
+        this.currentMusic = this.musics[index - 1]
+      }
     },
+
+    onNext(){
+      const index = this.currentList.findIndex(element => element.id === this.currentMusic.id);
+      console.log(this.currentList.length)
+      if(index  + 1 < this.currentList.length){
+        this.currentMusic = this.currentList[index + 1]
+      }
+    },
+
     togglePlayPause(){
       const audio = document.querySelector('#virtual-player');
       this.isPlaying = (this.isPlaying ? false : true);
       this.isPlaying ? audio.pause() : audio.play();
+    },
+
+    // ------UTILS
+
+    secondsToMinutes(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`;
+    },
+
+    // PLAYER PROGRAM
+
+    updateTime(){
+      const audio = document.querySelector('#virtual-player');
+      if(this.audioRender === true){
+        audio.addEventListener('timeupdate', ()=>{
+          const num = audio.currentTime;
+          this.currentTime = this.secondsToMinutes(num);
+        })
+      }
     },
 
     reload(){
@@ -93,23 +125,6 @@ export default {
         this.loaded = true;
       })
     },
-
-    secondsToMinutes(time) {
-      const minutes = Math.floor(time / 60);
-      const seconds = Math.floor(time % 60);
-      return `${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`;
-    },
-
-    updateTime(){
-      const audio = document.querySelector('#virtual-player');
-      if(this.audioRender === true){
-        audio.addEventListener('timeupdate', ()=>{
-          const num = audio.currentTime;
-          this.currentTime = this.secondsToMinutes(num);
-        })
-      }
-    },
-
 
 
   },
