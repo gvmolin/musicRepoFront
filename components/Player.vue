@@ -10,9 +10,10 @@
     <div class="container content">
       <div class="row player-body">
         <div class="album-cover">
-          <h2 class="music-icon"><i class="fa-solid fa-music"></i></h2>
+          <!-- <h2 class="music-icon"><i class="fa-solid fa-music" style="z-index:1"></i></h2> -->
+          <img :src="`api/albums/file/${this.currentMusic.album.id}`" alt="" style="width:100%; height:100%; z-index:10">
         </div>
-        <div class="center" style="flex-direction:column; ">
+        <div class="center" style="flex-direction:column;">
           <h2>{{currentMusic.name}}</h2>
           <h3>{{currentMusic.album.artist}}</h3>
           <div class="progress">
@@ -25,17 +26,26 @@
       <div class="progress-range">
         <input type="range">
         <div class="number-range">
-          <h4>{{this.currentTime + ''}}</h4>
-          <h4>/</h4>
+          <h4>{{this.currentTime}}</h4>
+          <h4> &nbsp;  &nbsp; /</h4>
           <h4>3:33</h4>
         </div>
         <div class="control-buttons center">
           <button class="btn btn-transparent" type="button" @click="onPrev"><i class="fa-solid fa-backward-step"></i></button>
-          <button class="btn btn-transparent" type="button" id="play-button" @click="togglePlayPause"><i class="fa-solid fa-play"></i></button>
+          <button class="btn btn-transparent" type="button" id="play-button" @click="togglePlayPause" v-if="renderPlayPause">
+            
+            <i class="fa-solid fa-pause" v-if="isPlaying === true"></i>
+            <i class="fa-solid fa-play" v-else></i>
+          </button>
           <button class="btn btn-transparent" type="button" @click="onNext"><i class="fa-solid fa-forward-step"></i></button>
         </div>
+        
         <div class="like-button">
           <button class="btn btn-transparent" type="button"><i class="fa-solid fa-heart"></i></button>
+          <div style="display:flex;" @mouseenter="volumeInputActive = true" @mouseleave="volumeInputActive = false">
+            <button class="btn btn-transparent" type="button"><i class="fas fa-volume-up"></i></button>
+            <input v-model="currentVolume" v-if="volumeInputActive" type="range" class="form-control-range" @change="onVolumeChange"/>  
+          </div>
         </div>
       </div>
 
@@ -47,29 +57,36 @@
 </template>
 
 <script>
+import { nextTick } from 'process';
+
 export default {
   props:['music', 'musics'],
 
   data(){
     return{
-      audioRender: true,
-      isPlaying: false,
-      audioTag: null,
+      audioRender: false,
+      renderPlayPause: true,
+      isPlaying: true,
       currentTime: '00:00',
-      loaded: false,
       currentMusic: this.music,
       currentList: this.musics,
+      volumeInputActive: false,
+      currentVolume:70,
+      currentCover: null,
     }
   },
 
-  beforeMount(){
-    this.audioTag = document.querySelector('#virtual-player');
-  },
-
   watch:{
-    async currentMusic(){
+    currentMusic(){
       this.reload();
     },
+    music(){
+      this.currentMusic = this.music;
+    },
+  },
+
+  mounted(){
+    this.audioRender = true
   },
 
   methods: {
@@ -77,34 +94,29 @@ export default {
     onPrev(){
       const index = this.currentList.findIndex(element => element.id === this.currentMusic.id);
       if(index > 0){
-        this.currentMusic = this.musics[index - 1]
+        this.currentMusic = this.currentList[index - 1]
+        this.play()
       }
     },
 
     onNext(){
       const index = this.currentList.findIndex(element => element.id === this.currentMusic.id);
-      console.log(this.currentList.length)
       if(index  + 1 < this.currentList.length){
         this.currentMusic = this.currentList[index + 1]
+        this.play()
       }
-    },
+    },    
 
     togglePlayPause(){
+      this.isPlaying === true ? this.pause() : this.play();
+    },
+
+    onVolumeChange(){
       const audio = document.querySelector('#virtual-player');
-      this.isPlaying = (this.isPlaying ? false : true);
-      this.isPlaying ? audio.pause() : audio.play();
+      audio.volume = (this.currentVolume / 100)
     },
 
-    // ------UTILS
-
-    secondsToMinutes(time) {
-      const minutes = Math.floor(time / 60);
-      const seconds = Math.floor(time % 60);
-      return `${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`;
-    },
-
-    // PLAYER PROGRAM
-
+    // ------PLAYER PROGRAM
     updateTime(){
       const audio = document.querySelector('#virtual-player');
       if(this.audioRender === true){
@@ -116,14 +128,51 @@ export default {
     },
 
     reload(){
-      const audio = document.querySelector('#virtual-player');
+      if(this.isPlaying) this.pause();
       this.audioRender = false;
-      this.loaded = false;
-      if(this.isPlaying) audio.pause();
        this.$nextTick(() => {
+        this.getCover();
         this.audioRender = true;
-        this.loaded = true;
+        this.play();
       })
+    },
+
+    reRenderIcon(){
+      this.renderPlayPause = false
+      this.$nextTick(() => {
+        this.renderPlayPause = true
+      })
+    },
+
+    play(){
+      const audio = document.querySelector('#virtual-player');
+      this.isPlaying = true
+      this.reRenderIcon()
+      if(audio){
+        audio.play()
+      }
+    },
+
+    pause(){
+      const audio = document.querySelector('#virtual-player');
+      this.isPlaying = false
+      this.reRenderIcon()
+      if(audio){
+        audio.pause()
+      }
+    },
+
+    async getCover(){
+      
+      const cover = await this.$axios.$get(`api/albums/file/${this.currentMusic.album.id}`)
+      this.currentCover = (cover ? cover : null)
+    },
+
+    // ------UTILS
+    secondsToMinutes(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`;
     },
 
 

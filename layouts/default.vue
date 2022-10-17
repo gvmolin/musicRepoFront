@@ -9,7 +9,8 @@
           <nuxt />
         </div>
         <div :class="col3 || 'none'" id="player-config">
-          <Player 
+          <Player  
+            v-if="playerActive"
             @hidePlayer="onHidePlayer"
             :music="selectedMusic"
             :musics="musicsList"
