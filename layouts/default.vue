@@ -6,7 +6,7 @@
           <Header @bodyOn="onBodyOn" />
         </div>
         <div :class="col2 || 'none'" id="body-config" v-if="render">
-          <nuxt />
+          <nuxt/>
         </div>
         <div :class="col3 || 'none'" id="player-config">
           <Player  
@@ -22,10 +22,7 @@
       <div>
         <Login @onLogin="onLogin" />
       </div>
-
     </div>
-
-
   </div>
 
 
@@ -62,8 +59,10 @@ export default {
       col3: 'none',
       render: true,
       isLogged: true,
+      token: localStorage.getItem("token"),
       selectedMusic:INITIAL_MUSIC,
       musicsList:[],
+
     }
   },
 
@@ -187,6 +186,7 @@ export default {
   height: 100vh;
   background: rgb(8, 8, 8);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #player-config {

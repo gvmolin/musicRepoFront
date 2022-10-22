@@ -24,11 +24,12 @@ Frontend SPA using vue/nuxt.js and vue-bootstrap. MusicRepo is a music webapp wi
 - Musics list
 - Musics streaming config
 - Functional player
+- Push next music when the current is over
+- last volume and last music on localStorage
+- music duration on player
 
 ## To do
 
-- Push next music when the current is over
-- last volume and last music on localStorage
 - Change pagination when the list is over
 - Highlight the current music
 - Albums list

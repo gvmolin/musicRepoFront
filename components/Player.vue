@@ -15,20 +15,16 @@
         </div>
         <div class="center" style="flex-direction:column;">
           <h2>{{currentMusic.name}}</h2>
-          <h3>{{currentMusic.album.artist}}</h3>
-          <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0"
-              aria-valuemax="100"></div>
-          </div>
+          <h3>{{currentMusic.album.artist}}</h3>          
         </div>
 
       </div>
       <div class="progress-range">
-        <input type="range">
+        <input type="range" min="0" :max="`${currentMusic.duration}`" step="1" :value="`${currentTime}`">
         <div class="number-range">
-          <h4>{{this.currentTime}}</h4>
+          <h4>{{secondsToMinutes(currentTime)}}</h4>
           <h4> &nbsp;  &nbsp; /</h4>
-          <h4>3:33</h4>
+          <h4>{{ secondsToMinutes(currentMusic.duration) }}</h4>
         </div>
         <div class="control-buttons center">
           <button class="btn btn-transparent" type="button" @click="onPrev"><i class="fa-solid fa-backward-step"></i></button>
@@ -49,7 +45,15 @@
         </div>
       </div>
 
-      <audio v-if="audioRender" autoplay controls @timeupdate="updateTime" id="virtual-player" style="display:none;">
+      <audio 
+        v-if="audioRender" 
+        autoplay 
+        controls  
+        @timeupdate="updateTime" 
+        @ended="onNext"
+        id="virtual-player"
+        style="display:none"
+      >
         <source :src="`api/musics/file/${currentMusic.id}`" type="audio/mp3">
       </audio>
     </div>
@@ -57,7 +61,6 @@
 </template>
 
 <script>
-import { nextTick } from 'process';
 
 export default {
   props:['music', 'musics'],
@@ -67,11 +70,11 @@ export default {
       audioRender: false,
       renderPlayPause: true,
       isPlaying: true,
-      currentTime: '00:00',
+      currentTime: 0,
       currentMusic: this.music,
       currentList: this.musics,
       volumeInputActive: false,
-      currentVolume:70,
+      currentVolume: 70,
       currentCover: null,
     }
   },
@@ -80,13 +83,23 @@ export default {
     currentMusic(){
       this.reload();
     },
+
+    musics(){
+      this.currentList = this.musics
+    },
+
     music(){
+      this.currentTime = 0;
       this.currentMusic = this.music;
     },
   },
 
+  beforeMount(){
+    this.audioRender = true;
+  },
+
   mounted(){
-    this.audioRender = true
+    this.initVolume();
   },
 
   methods: {
@@ -95,7 +108,13 @@ export default {
       const index = this.currentList.findIndex(element => element.id === this.currentMusic.id);
       if(index > 0){
         this.currentMusic = this.currentList[index - 1]
+        this.$nuxt.$emit('selectMusic', {
+          music: { ...this.currentMusic },
+          list: [...this.musics],
+        })
         this.play()
+      } else {
+        this.$nuxt.$emit('prevPage')
       }
     },
 
@@ -103,7 +122,13 @@ export default {
       const index = this.currentList.findIndex(element => element.id === this.currentMusic.id);
       if(index  + 1 < this.currentList.length){
         this.currentMusic = this.currentList[index + 1]
+        this.$nuxt.$emit('selectMusic', {
+          music: { ...this.currentMusic },
+          list: [...this.musics],
+        })
         this.play()
+      } else {
+        this.$nuxt.$emit('nextPage')
       }
     },    
 
@@ -112,8 +137,9 @@ export default {
     },
 
     onVolumeChange(){
+      localStorage.setItem('lastVolume', this.currentVolume)
       const audio = document.querySelector('#virtual-player');
-      audio.volume = (this.currentVolume / 100)
+      if(audio) audio.volume = (this.currentVolume / 100)
     },
 
     // ------PLAYER PROGRAM
@@ -121,8 +147,7 @@ export default {
       const audio = document.querySelector('#virtual-player');
       if(this.audioRender === true){
         audio.addEventListener('timeupdate', ()=>{
-          const num = audio.currentTime;
-          this.currentTime = this.secondsToMinutes(num);
+          this.currentTime = audio.currentTime;
         })
       }
     },
@@ -162,8 +187,14 @@ export default {
       }
     },
 
+    initVolume(){
+      if (localStorage.getItem('lastVolume')) {
+        this.currentVolume = localStorage.getItem('lastVolume');
+        this.onVolumeChange();
+      }
+    },
+
     async getCover(){
-      
       const cover = await this.$axios.$get(`api/albums/file/${this.currentMusic.album.id}`)
       this.currentCover = (cover ? cover : null)
     },
@@ -174,8 +205,6 @@ export default {
       const seconds = Math.floor(time % 60);
       return `${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`;
     },
-
-
   },
 }
 </script>
